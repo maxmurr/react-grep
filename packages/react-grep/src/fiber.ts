@@ -111,13 +111,15 @@ const resolveFrame = async (frame: RawFrame): Promise<DebugSource> => {
 
 const getCompositeDebugSource = async (fiber: Fiber): Promise<DebugSource | null> => {
   if (fiber._debugSource) return fiber._debugSource;
-  if (fiber._debugOwner?._debugSource) return fiber._debugOwner._debugSource;
+
+  const owner = fiber._debugOwner;
+  if (owner && !isServerComponent(owner) && owner._debugSource) return owner._debugSource;
 
   const frame = parseFirstUserFrame(fiber);
   if (frame) return resolveFrame(frame);
 
-  if (fiber._debugOwner) {
-    const ownerFrame = parseFirstUserFrame(fiber._debugOwner);
+  if (owner && !isServerComponent(owner)) {
+    const ownerFrame = parseFirstUserFrame(owner);
     if (ownerFrame) return resolveFrame(ownerFrame);
   }
 
