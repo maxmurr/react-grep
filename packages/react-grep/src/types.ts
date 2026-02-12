@@ -4,6 +4,11 @@ export interface DebugSource {
   columnNumber?: number;
 }
 
+export interface ServerComponentOwner {
+  name: string;
+  env: string;
+}
+
 export interface Fiber {
   tag: number;
   type:
@@ -15,7 +20,7 @@ export interface Fiber {
   return: Fiber | null;
   _debugSource?: DebugSource;
   _debugStack?: { stack: string };
-  _debugOwner?: Fiber | null;
+  _debugOwner?: Fiber | ServerComponentOwner | null;
 }
 
 export type ElementKind = "component" | "element" | "children";

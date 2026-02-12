@@ -67,30 +67,113 @@ const isSameOrigin = (a: string, b: string): boolean => {
   }
 };
 
+const fetchSourceMapJson = async (ref: string, baseUrl: string): Promise<string | null> => {
+  if (ref.startsWith("data:")) {
+    const dataMatch = DATA_URI_RE.exec(ref);
+    return dataMatch ? atob(dataMatch[1]) : null;
+  }
+  const mapUrl = new URL(ref, baseUrl).href;
+  if (!isSameOrigin(baseUrl, mapUrl)) return null;
+  const mapRes = await fetch(mapUrl);
+  if (!mapRes.ok) return null;
+  return mapRes.text();
+};
+
+const flattenIndexedMap = (
+  sections: {
+    offset: { line: number; column: number };
+    map: { sources: string[]; mappings: string };
+  }[],
+): SourceMapData => {
+  const allSources: string[] = [];
+  const allMappings: Segment[][] = [];
+
+  for (const section of sections) {
+    const decoded = decodeMappings(section.map.mappings);
+    const lineOff = section.offset.line;
+    const colOff = section.offset.column;
+    const srcOff = allSources.length;
+
+    while (allMappings.length < lineOff + decoded.length) allMappings.push([]);
+
+    for (let i = 0; i < decoded.length; i++) {
+      const target = allMappings[lineOff + i];
+      for (const seg of decoded[i]) {
+        target.push([i === 0 ? seg[0] + colOff : seg[0], seg[1] + srcOff, seg[2], seg[3]]);
+      }
+    }
+    allSources.push(...section.map.sources);
+  }
+
+  for (const line of allMappings) {
+    if (line.length > 1) line.sort((a, b) => a[0] - b[0]);
+  }
+
+  return { sources: allSources, mappings: allMappings };
+};
+
+const parseSourceMap = (json: string): SourceMapData | null => {
+  try {
+    const raw = JSON.parse(json);
+    if (Array.isArray(raw.sections)) return flattenIndexedMap(raw.sections);
+    if (!raw.sources || !raw.mappings) return null;
+    return { sources: raw.sources, mappings: decodeMappings(raw.mappings) };
+  } catch {
+    return null;
+  }
+};
+
 const fetchAndParse = async (url: string): Promise<SourceMapData | null> => {
   try {
     const res = await fetch(url);
     const text = await res.text();
 
     const match = text.match(/\/\/[#@]\s*sourceMappingURL=([^\s]+)$/m);
-    if (!match) return null;
-
-    const ref = match[1].trim();
-    let mapJson: string;
-
-    if (ref.startsWith("data:")) {
-      const dataMatch = DATA_URI_RE.exec(ref);
-      if (!dataMatch) return null;
-      mapJson = atob(dataMatch[1]);
-    } else {
-      const mapUrl = new URL(ref, url).href;
-      if (!isSameOrigin(url, mapUrl)) return null;
-      const mapRes = await fetch(mapUrl);
-      mapJson = await mapRes.text();
+    if (match) {
+      const json = await fetchSourceMapJson(match[1].trim(), url);
+      if (json) {
+        const map = parseSourceMap(json);
+        if (map) return map;
+      }
     }
 
-    const raw = JSON.parse(mapJson);
-    return { sources: raw.sources, mappings: decodeMappings(raw.mappings) };
+    const headerRef = res.headers.get("SourceMap") ?? res.headers.get("X-SourceMap");
+    if (headerRef) {
+      const json = await fetchSourceMapJson(headerRef.trim(), url);
+      if (json) {
+        const map = parseSourceMap(json);
+        if (map) return map;
+      }
+    }
+
+    const conventionRes = await fetch(`${url}.map`);
+    if (conventionRes.ok) {
+      const json = await conventionRes.text();
+      return parseSourceMap(json);
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
+};
+
+const ABOUT_SERVER_RE = /^about:\/\/React\/Server\/file:\/\/\//;
+const NEXT_DOTDIR_RE = /[/\\](\.next[/\\].+?)(?:\?.*)?$/;
+
+const fetchAndParseServerFile = async (url: string): Promise<SourceMapData | null> => {
+  try {
+    const filePath = decodeURIComponent(url.replace(ABOUT_SERVER_RE, ""));
+    const dotNextMatch = NEXT_DOTDIR_RE.exec(filePath);
+    if (!dotNextMatch) return null;
+
+    const origin = typeof location !== "undefined" ? location.origin : "";
+    const mapUrl = `${origin}/__nextjs_source-map?filename=${encodeURIComponent(dotNextMatch[1])}`;
+    const res = await fetch(mapUrl);
+    if (!res.ok) return null;
+    const json = await res.text();
+    if (!json) return null;
+    return parseSourceMap(json);
   } catch {
     return null;
   }
@@ -99,7 +182,7 @@ const fetchAndParse = async (url: string): Promise<SourceMapData | null> => {
 const getSourceMap = (url: string): Promise<SourceMapData | null> => {
   let promise = cache.get(url);
   if (!promise) {
-    promise = fetchAndParse(url);
+    promise = ABOUT_SERVER_RE.test(url) ? fetchAndParseServerFile(url) : fetchAndParse(url);
     cache.set(url, promise);
   }
   return promise;
@@ -132,7 +215,10 @@ export const resolveOriginalPosition = async (
   const seg = lookup(map, line - 1, column - 1);
   if (!seg) return null;
 
-  const fileName = map.sources[seg[1]];
+  let fileName = map.sources[seg[1]];
+  if (fileName.startsWith("file:///")) {
+    fileName = decodeURIComponent(new URL(fileName).pathname);
+  }
 
   return {
     fileName,

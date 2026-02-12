@@ -1,5 +1,8 @@
 import { resolveOriginalPosition } from "./source-map";
-import type { ComponentInfo, DebugSource, Fiber } from "./types";
+import type { ComponentInfo, DebugSource, Fiber, ServerComponentOwner } from "./types";
+
+const isServerComponent = (owner: Fiber | ServerComponentOwner): owner is ServerComponentOwner =>
+  "env" in owner && typeof owner.name === "string";
 
 const COMPOSITE_TAGS = new Set([
   0, // FunctionComponent
@@ -58,6 +61,7 @@ const SKIP_FRAMES = new Set([
   "jsx",
   "react-stack-top-frame",
   "react_stack_bottom_frame",
+  "fakeJSXCallSite",
 ]);
 
 const FRAME_RE = /at (?:(\S+) )?\(?(.+):(\d+):(\d+)\)?$/;
@@ -151,7 +155,7 @@ export const getComponentInfo = async (el: Element): Promise<ComponentInfo | nul
   const owner = domFiber._debugOwner;
   const elementTag = typeof domFiber.type === "string" ? domFiber.type : null;
 
-  if (owner && owner === composite) {
+  if (owner && !isServerComponent(owner) && owner === composite) {
     return {
       kind: "element",
       name: getComponentName(owner),
@@ -161,11 +165,16 @@ export const getComponentInfo = async (el: Element): Promise<ComponentInfo | nul
     };
   }
 
-  const nameSource = owner && COMPOSITE_TAGS.has(owner.tag) ? owner : composite;
+  const name =
+    owner && isServerComponent(owner)
+      ? owner.name
+      : getComponentName(
+          owner && !isServerComponent(owner) && COMPOSITE_TAGS.has(owner.tag) ? owner : composite,
+        );
 
   return {
     kind: "children",
-    name: getComponentName(nameSource),
+    name,
     elementTag,
     source: await getDomDebugSource(domFiber),
     callSite: null,
