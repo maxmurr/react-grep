@@ -1,5 +1,11 @@
 # react-grep
 
+## 0.2.1
+
+### Patch Changes
+
+- Replace deprecated `navigator.platform` with `userAgentData` fallback, replace unsafe `Function` type with specific callable types, bound source map cache, fix race condition in click handler, and save/restore cursor properly
+
 ## 0.2.0
 
 ### Minor Changes
