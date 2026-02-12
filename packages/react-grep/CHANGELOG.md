@@ -1,5 +1,11 @@
 # react-grep
 
+## 0.2.2
+
+### Patch Changes
+
+- Set npm homepage to https://react-grep.com
+
 ## 0.2.1
 
 ### Patch Changes
