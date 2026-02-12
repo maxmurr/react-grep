@@ -3,7 +3,7 @@ import { JetBrains_Mono, DM_Sans } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 
-const SITE_URL = "https://react-grep.dev";
+const SITE_URL = "https://react-grep.com";
 
 const mono = JetBrains_Mono({
   subsets: ["latin"],
