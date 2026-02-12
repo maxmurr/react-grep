@@ -1,5 +1,7 @@
 # react-grep
 
+[![npm](https://img.shields.io/npm/v/react-grep)](https://www.npmjs.com/package/react-grep)
+
 Hold **Cmd** to see React component names + file:line overlaid on any element.
 
 - **Inspect** — Hold `Cmd` (Mac) / `Ctrl` (Windows/Linux) and hover over any element to see the React component name and source file location
