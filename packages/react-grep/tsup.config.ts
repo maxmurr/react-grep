@@ -16,7 +16,7 @@ const IIFE_BUILD: Options = {
 
 const LIBRARY_BUILD: Options = {
   entry: ["src/index.ts"],
-  format: ["esm", "cjs"],
+  format: ["esm"],
   platform: "browser",
   target: "es2022",
   outDir: "dist",
