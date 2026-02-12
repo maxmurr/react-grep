@@ -1,0 +1,15 @@
+node_modules
+dist
+.turbo
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+.env
+.env*.local
+.npmrc
+*.tgz
+.DS_Store
+*.log
+bun.lock
+.claude

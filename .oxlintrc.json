@@ -1,0 +1,12 @@
+{
+  "$schema": "https://raw.githubusercontent.com/nicolo-ribaudo/oxc-project.github.io/refs/heads/compiled-schema/oxlint.schema.json",
+  "categories": {
+    "correctness": "warn",
+    "suspicious": "warn",
+    "pedantic": "off"
+  },
+  "ignorePatterns": ["dist", ".next", "node_modules"],
+  "rules": {
+    "react/react-in-jsx-scope": "off"
+  }
+}

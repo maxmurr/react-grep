@@ -1,0 +1,62 @@
+{
+  "name": "react-grep",
+  "version": "0.0.1",
+  "description": "Hold CMD to see React component names + file:line overlaid on any element",
+  "keywords": [
+    "component",
+    "debug",
+    "devtools",
+    "fiber",
+    "inspect",
+    "inspector",
+    "react",
+    "source"
+  ],
+  "homepage": "https://github.com/maxmurr/react-grep",
+  "bugs": {
+    "url": "https://github.com/maxmurr/react-grep/issues"
+  },
+  "license": "MIT",
+  "author": "Max Murray",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maxmurr/react-grep.git",
+    "directory": "packages/react-grep"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "type": "module",
+  "sideEffects": true,
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "browser": "dist/index.global.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "check-types": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "tsup": "^8.2.4",
+    "typescript": "^5.7.0"
+  }
+}
