@@ -1,5 +1,15 @@
 # react-grep
 
+## 0.2.0
+
+### Minor Changes
+
+- 7c2815e: Drop CommonJS build output to reduce package size
+
+### Patch Changes
+
+- 997cc32: Fix type narrowing for `_debugOwner` when owner is a server component
+
 ## 0.1.2
 
 ### Patch Changes
