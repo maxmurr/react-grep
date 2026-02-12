@@ -49,7 +49,21 @@ const Page = () => (
         overflowX: "auto",
       }}
     >
-      <code>{`import { init } from "react-grep";\n\ninit();`}</code>
+      <code>{`import "react-grep";`}</code>
+    </pre>
+    <p style={{ color: "#6b7280", marginTop: "0.25rem" }}>
+      The inspector activates automatically. For manual control:
+    </p>
+    <pre
+      style={{
+        backgroundColor: "#18181b",
+        color: "#e4e4e7",
+        padding: "1rem",
+        borderRadius: "8px",
+        overflowX: "auto",
+      }}
+    >
+      <code>{`import { init, destroy } from "react-grep";\n\ninit();    // start the inspector\ndestroy(); // stop and clean up`}</code>
     </pre>
 
     <h2>How it works</h2>
@@ -59,8 +73,12 @@ const Page = () => (
         hover over any element to see the React component name and source file location.
       </li>
       <li>
-        <strong>Copy:</strong> Hold modifier + <kbd>Shift</kbd> and click to copy the file path to
-        your clipboard.
+        <strong>Toggle source:</strong> Tap <kbd>Shift</kbd> (while holding modifier) to switch
+        between the component definition and the call site where it&#39;s rendered.
+      </li>
+      <li>
+        <strong>Copy:</strong> <kbd>⌘</kbd>+<kbd>Shift</kbd>+Click to copy the active file path and
+        line number to your clipboard.
       </li>
     </ul>
   </main>
