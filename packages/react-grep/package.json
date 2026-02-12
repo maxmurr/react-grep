@@ -1,6 +1,6 @@
 {
   "name": "react-grep",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Hold CMD to see React component names + file:line overlaid on any element",
   "keywords": [
     "component",

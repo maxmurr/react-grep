@@ -1,5 +1,17 @@
 # react-grep
 
+## 0.1.2
+
+### Patch Changes
+
+- Fix source map resolution for Next.js/Turbopack
+
+  - Add source map discovery via `SourceMap`/`X-SourceMap` response headers and `<url>.map` convention
+  - Support indexed source maps (sections format) used by Turbopack
+  - Resolve server component source positions via `__nextjs_source-map` endpoint
+  - Display server component names (e.g. `Page`) instead of internal Next.js wrappers (e.g. `SegmentViewNode`)
+  - Skip React internal `fakeJSXCallSite` stack frames
+
 ## 0.1.1
 
 ### Patch Changes
