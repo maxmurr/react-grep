@@ -7,6 +7,7 @@ interface SourceMapData {
 
 type Segment = [genCol: number, srcIdx: number, origLine: number, origCol: number];
 
+const MAX_CACHE_SIZE = 100;
 const cache = new Map<string, Promise<SourceMapData | null>>();
 
 const VLQ_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
@@ -182,6 +183,10 @@ const fetchAndParseServerFile = async (url: string): Promise<SourceMapData | nul
 const getSourceMap = (url: string): Promise<SourceMapData | null> => {
   let promise = cache.get(url);
   if (!promise) {
+    if (cache.size >= MAX_CACHE_SIZE) {
+      const oldest = cache.keys().next().value!;
+      cache.delete(oldest);
+    }
     promise = ABOUT_SERVER_RE.test(url) ? fetchAndParseServerFile(url) : fetchAndParse(url);
     cache.set(url, promise);
   }

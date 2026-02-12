@@ -31,13 +31,13 @@ export const getCompositeComponentFiber = (fiber: Fiber): Fiber | null => {
   return null;
 };
 
-const getInnerFunction = (type: Fiber["type"]): (Function & { displayName?: string }) | null => {
-  if (typeof type === "function") return type as Function & { displayName?: string };
+type NamedFn = ((...args: unknown[]) => unknown) & { displayName?: string; name: string };
+
+const getInnerFunction = (type: Fiber["type"]): NamedFn | null => {
+  if (typeof type === "function") return type;
   if (type && typeof type === "object") {
-    if ("render" in type && typeof type.render === "function")
-      return type.render as Function & { displayName?: string };
-    if ("type" in type && typeof type.type === "function")
-      return type.type as Function & { displayName?: string };
+    if ("render" in type && typeof type.render === "function") return type.render;
+    if ("type" in type && typeof type.type === "function") return type.type;
   }
   return null;
 };
@@ -45,7 +45,7 @@ const getInnerFunction = (type: Fiber["type"]): (Function & { displayName?: stri
 export const getComponentName = (fiber: Fiber): string => {
   const { type } = fiber;
   if (typeof type === "function") {
-    return (type as Function & { displayName?: string }).displayName || type.name || "Anonymous";
+    return type.displayName || type.name || "Anonymous";
   }
   if (type && typeof type === "object") {
     if ("displayName" in type && type.displayName) return type.displayName;

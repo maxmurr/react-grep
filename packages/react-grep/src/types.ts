@@ -9,13 +9,15 @@ export interface ServerComponentOwner {
   env: string;
 }
 
+type AnyFn = ((...args: unknown[]) => unknown) & { displayName?: string; name: string };
+
 export interface Fiber {
   tag: number;
   type:
     | string
-    | (Function & { displayName?: string })
-    | { type: Function & { displayName?: string }; displayName?: string }
-    | { render: Function & { displayName?: string }; displayName?: string }
+    | AnyFn
+    | { type: AnyFn; displayName?: string }
+    | { render: AnyFn; displayName?: string }
     | null;
   return: Fiber | null;
   _debugSource?: DebugSource;

@@ -2,13 +2,13 @@ import { Inspector } from "./inspector";
 
 let inspector: Inspector | null = null;
 
-export const init = () => {
+export const init = (): void => {
   if (inspector) return;
   inspector = new Inspector();
   inspector.start();
 };
 
-export const destroy = () => {
+export const destroy = (): void => {
   if (!inspector) return;
   inspector.stop();
   inspector = null;

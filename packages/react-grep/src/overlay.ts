@@ -1,6 +1,5 @@
+import { isMac } from "./env";
 import type { ComponentInfo } from "./types";
-
-const isMac = typeof navigator !== "undefined" && /Mac|iPhone|iPad/.test(navigator.platform);
 
 const COLORS = {
   name: "#93c5fd",
@@ -62,6 +61,7 @@ const createSpan = (text: string, styles: Partial<CSSStyleDeclaration>): HTMLSpa
 export class OverlayManager {
   private highlight: HTMLDivElement | null = null;
   private tooltip: HTMLDivElement | null = null;
+  private copiedTimer: ReturnType<typeof setTimeout> | null = null;
 
   init() {
     if (this.highlight) return;
@@ -149,7 +149,8 @@ export class OverlayManager {
     this.tooltip.appendChild(createSpan("Copied!", { color: "#4ade80", fontWeight: "600" }));
     this.tooltip.appendChild(createSpan(` ${truncatePath(location)}`, { color: "#a1a1aa" }));
     this.tooltip.style.display = "block";
-    setTimeout(() => this.hide(), 1500);
+    if (this.copiedTimer) clearTimeout(this.copiedTimer);
+    this.copiedTimer = setTimeout(() => this.hide(), 1500);
   }
 
   hide() {
@@ -158,6 +159,10 @@ export class OverlayManager {
   }
 
   destroy() {
+    if (this.copiedTimer) {
+      clearTimeout(this.copiedTimer);
+      this.copiedTimer = null;
+    }
     this.highlight?.remove();
     this.tooltip?.remove();
     this.highlight = null;

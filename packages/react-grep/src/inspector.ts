@@ -1,16 +1,17 @@
+import { isMac } from "./env";
 import { getComponentInfo } from "./fiber";
 import { OverlayManager } from "./overlay";
 import type { ComponentInfo, DebugSource } from "./types";
 
-const isMac = typeof navigator !== "undefined" && /Mac|iPhone|iPad/.test(navigator.platform);
-
 export class Inspector {
   private overlay = new OverlayManager();
   private moveGeneration = 0;
+  private clickGeneration = 0;
   private lastTarget: Element | null = null;
   private lastInfo: ComponentInfo | null = null;
   private sourceToggled = false;
   private shiftPressedClean = false;
+  private savedCursor = "";
   private boundHandlers: {
     mousemove: (e: MouseEvent) => void;
     click: (e: MouseEvent) => void;
@@ -40,7 +41,7 @@ export class Inspector {
     window.removeEventListener("keydown", this.boundHandlers.keydown);
     window.removeEventListener("keyup", this.boundHandlers.keyup);
     this.overlay.destroy();
-    document.body.style.cursor = "";
+    this.restoreCursor();
     this.lastTarget = null;
     this.lastInfo = null;
     this.sourceToggled = false;
@@ -54,14 +55,14 @@ export class Inspector {
   private async handleMouseMove(e: MouseEvent) {
     if (!this.isModifierHeld(e)) {
       this.overlay.hide();
-      document.body.style.cursor = "";
+      this.restoreCursor();
       this.lastTarget = null;
       this.lastInfo = null;
       return;
     }
 
     this.overlay.init();
-    document.body.style.cursor = "crosshair";
+    this.setCrosshairCursor();
 
     const target = document.elementFromPoint(e.clientX, e.clientY);
     if (!target || target.closest("[data-react-grep]")) return;
@@ -97,8 +98,9 @@ export class Inspector {
     e.stopImmediatePropagation();
 
     this.shiftPressedClean = false;
+    const gen = ++this.clickGeneration;
     const info = await getComponentInfo(target);
-    if (!info) return;
+    if (gen !== this.clickGeneration || !info) return;
 
     const source = this.getActiveCopySource(info);
     if (!source) return;
@@ -122,7 +124,7 @@ export class Inspector {
   private handleKeyUp(e: KeyboardEvent) {
     if ((isMac && e.key === "Meta") || (!isMac && e.key === "Control")) {
       this.overlay.hide();
-      document.body.style.cursor = "";
+      this.restoreCursor();
       this.lastTarget = null;
       this.lastInfo = null;
       return;
@@ -146,6 +148,19 @@ export class Inspector {
 
   private getActiveCopySource(info: ComponentInfo): DebugSource | null {
     return this.sourceToggled && info.callSite ? info.callSite : info.source;
+  }
+
+  private setCrosshairCursor() {
+    if (document.body.style.cursor !== "crosshair") {
+      this.savedCursor = document.body.style.cursor;
+      document.body.style.cursor = "crosshair";
+    }
+  }
+
+  private restoreCursor() {
+    if (document.body.style.cursor === "crosshair") {
+      document.body.style.cursor = this.savedCursor;
+    }
   }
 
   private async copyToClipboard(text: string): Promise<void> {
