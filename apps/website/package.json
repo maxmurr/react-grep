@@ -17,6 +17,7 @@
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "react-grep": "workspace:*",
     "typescript": "^5.7.0"
   }
 }

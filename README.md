@@ -41,6 +41,25 @@ destroy(); // stop and clean up
 
 The inspector starts automatically when the script loads.
 
+## Compatibility
+
+react-grep works with any React app that uses `react-dom` in development mode. It reads React's internal fiber tree, so no framework-specific plugin is needed.
+
+| Framework / Bundler               | Status                 |
+| --------------------------------- | ---------------------- |
+| Vite + React                      | Tested                 |
+| Next.js 15 (Turbopack)            | Tested                 |
+| Next.js (Webpack)                 | Untested — should work |
+| Create React App                  | Untested — should work |
+| Remix                             | Untested — should work |
+| Gatsby                            | Untested — should work |
+| Custom Webpack / Rollup / esbuild | Untested — should work |
+| React Native                      | Not supported (no DOM) |
+
+Next.js has dedicated support for server component names and Turbopack indexed source maps.
+
+Source map resolution is automatic — if your dev server serves source maps (inline or external), react-grep will resolve bundled locations back to original files.
+
 ## How it works
 
 react-grep reads React's internal fiber tree to find component names and source locations (`_debugSource` / `_debugStack`). This data is only available in **development builds** of React — production builds strip it out.
