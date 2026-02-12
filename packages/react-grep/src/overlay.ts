@@ -48,8 +48,8 @@ const applyStyles = (el: HTMLElement, styles: Partial<CSSStyleDeclaration>) => {
 
 const truncatePath = (filePath: string): string => {
   const parts = filePath.split("/");
-  if (parts.length <= 3) return filePath;
-  return `.../${parts.slice(-3).join("/")}`;
+  if (parts.length <= 2) return filePath;
+  return `.../${parts.slice(-2).join("/")}`;
 };
 
 const createSpan = (text: string, styles: Partial<CSSStyleDeclaration>): HTMLSpanElement => {
