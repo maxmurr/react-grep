@@ -1,20 +1,3 @@
-const code = (lines: string[]) => `<code>${lines.join("\n")}</code>`;
-
-const ESM_IMPORT = code([
-  `<span class="token-keyword">import</span> <span class="token-string">"react-grep"</span>;`,
-]);
-
-const SCRIPT_TAG = code([
-  `&lt;<span class="token-tag">script</span> <span class="token-attr">src</span>=<span class="token-string">"https://unpkg.com/react-grep/dist/index.global.js"</span>&gt;&lt;/<span class="token-tag">script</span>&gt;`,
-]);
-
-const MANUAL_CONTROL = code([
-  `<span class="token-keyword">import</span> { <span class="token-function">init</span>, <span class="token-function">destroy</span> } <span class="token-keyword">from</span> <span class="token-string">"react-grep"</span>;`,
-  ``,
-  `<span class="token-function">init</span>();    <span class="token-comment">// start the inspector</span>`,
-  `<span class="token-function">destroy</span>(); <span class="token-comment">// stop and clean up</span>`,
-]);
-
 const Page = () => (
   <main id="main">
     <section className="hero">
@@ -93,18 +76,52 @@ const Page = () => (
 
       <div className="code-section">
         <h3 className="code-label">ESM Import</h3>
-        <pre className="code-block" dangerouslySetInnerHTML={{ __html: ESM_IMPORT }} />
+        <pre className="code-block">
+          <code>
+            <span className="token-keyword">import</span>{" "}
+            <span className="token-string">&quot;react-grep&quot;</span>;
+          </code>
+        </pre>
         <p className="code-note">The inspector activates automatically on import.</p>
       </div>
 
       <div className="code-section">
         <h3 className="code-label">Script Tag</h3>
-        <pre className="code-block" dangerouslySetInnerHTML={{ __html: SCRIPT_TAG }} />
+        <pre className="code-block">
+          <code>
+            {"<"}
+            <span className="token-tag">script</span> <span className="token-attr">src</span>=
+            <span className="token-string">
+              &quot;https://unpkg.com/react-grep/dist/index.global.js&quot;
+            </span>
+            {">"}&lt;/
+            <span className="token-tag">script</span>
+            {">"}
+          </code>
+        </pre>
       </div>
 
       <div className="code-section">
         <h3 className="code-label">Manual Control</h3>
-        <pre className="code-block" dangerouslySetInnerHTML={{ __html: MANUAL_CONTROL }} />
+        <pre className="code-block">
+          <code>
+            <span className="token-keyword">import</span>
+            {" { "}
+            <span className="token-function">init</span>
+            {", "}
+            <span className="token-function">destroy</span>
+            {" } "}
+            <span className="token-keyword">from</span>{" "}
+            <span className="token-string">&quot;react-grep&quot;</span>;{"\n\n"}
+            <span className="token-function">init</span>
+            {"();    "}
+            <span className="token-comment">{"// start the inspector"}</span>
+            {"\n"}
+            <span className="token-function">destroy</span>
+            {"(); "}
+            <span className="token-comment">{"// stop and clean up"}</span>
+          </code>
+        </pre>
       </div>
     </section>
 
