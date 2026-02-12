@@ -1,9 +1,9 @@
 {
-  "$schema": "https://turbo.build/schema.json",
+  "$schema": "https://turborepo.dev/schema.v2.json",
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", ".next/**"]
+      "outputs": ["dist/**"]
     },
     "dev": {
       "persistent": true,
@@ -11,8 +11,6 @@
     },
     "check-types": {
       "dependsOn": ["^build"]
-    },
-    "lint": {},
-    "format:check": {}
+    }
   }
 }
