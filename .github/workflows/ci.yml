@@ -28,11 +28,17 @@ jobs:
       - name: Install Dependencies
         run: bun install --frozen-lockfile
 
-      - name: Build
-        run: bunx turbo run build --affected
+      - name: Build & Type Check
+        run: bunx turbo run build check-types --affected
+        env:
+          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+          TURBO_TEAM: ${{ vars.TURBO_TEAM }}
 
-      - name: Type Check
-        run: bunx turbo run check-types --affected
+      - name: Test
+        run: bunx turbo run test --affected
+        env:
+          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+          TURBO_TEAM: ${{ vars.TURBO_TEAM }}
 
       - name: Lint
         run: bun run lint

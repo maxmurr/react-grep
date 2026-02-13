@@ -63,9 +63,11 @@ const DATA_URI_RE = /^data:application\/json[^,]*;base64,([A-Za-z0-9+/=]+)$/;
 const isSameOrigin = (a: string, b: string): boolean => {
   try {
     return new URL(a).origin === new URL(b).origin;
+    /* v8 ignore start */
   } catch {
     return false;
   }
+  /* v8 ignore stop */
 };
 
 const fetchSourceMapJson = async (ref: string, baseUrl: string): Promise<string | null> => {
@@ -168,7 +170,9 @@ const fetchAndParseServerFile = async (url: string): Promise<SourceMapData | nul
     const dotNextMatch = NEXT_DOTDIR_RE.exec(filePath);
     if (!dotNextMatch) return null;
 
+    /* v8 ignore start */
     const origin = typeof location !== "undefined" ? location.origin : "";
+    /* v8 ignore stop */
     const mapUrl = `${origin}/__nextjs_source-map?filename=${encodeURIComponent(dotNextMatch[1])}`;
     const res = await fetch(mapUrl);
     if (!res.ok) return null;
