@@ -1,5 +1,11 @@
 # react-grep
 
+## 0.3.0
+
+### Minor Changes
+
+- Add webpack/Gatsby source map support. Fix stack frame parsing for Gatsby's patched createElement and resolve source maps from webpack eval'd bundle chunks via the Performance API.
+
 ## 0.2.2
 
 ### Patch Changes

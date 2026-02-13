@@ -7,5 +7,12 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["@react-grep/example", "@react-grep/website"]
+  "ignore": [
+    "@react-grep/example-esbuild",
+    "@react-grep/example-gatsby",
+    "@react-grep/example-nextjs-webpack",
+    "@react-grep/example-react-router",
+    "@react-grep/example-vite",
+    "@react-grep/website"
+  ]
 }
