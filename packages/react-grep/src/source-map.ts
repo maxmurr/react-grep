@@ -278,6 +278,7 @@ export const resolveOriginalPosition = async (
   if (fileName.startsWith("file:///")) {
     fileName = decodeURIComponent(new URL(fileName).pathname);
   }
+  fileName = fileName.replace(/^(?:\.\.\/)+/, "");
 
   return {
     fileName,

@@ -678,5 +678,14 @@ describe("source-map", () => {
       const result = await resolveOriginalPosition("http://localhost/asis.js", 1, 1);
       expect(result!.fileName).toBe("src/components/Button.tsx");
     });
+
+    it("strips leading ../ sequences from esbuild-style relative source paths", async () => {
+      const map = makeSourceMap(["../../src/app.tsx"], "AAAA");
+      const js = jsWithSourceMapComment("code", toBase64DataUri(map));
+      (fetch as Mock).mockResolvedValueOnce(createFetchResponse(js));
+
+      const result = await resolveOriginalPosition("http://localhost/dist/main.js", 1, 1);
+      expect(result!.fileName).toBe("src/app.tsx");
+    });
   });
 });
