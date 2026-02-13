@@ -430,6 +430,64 @@ describe("source-map", () => {
     });
   });
 
+  describe("fetchAndParseServerWebpackInternal (Next.js RSC + webpack)", () => {
+    it("fetches source map for about://React/Server/webpack-internal:/// URLs", async () => {
+      vi.stubGlobal("location", { origin: "http://localhost:3002" });
+      const map = makeSourceMap(["webpack://./src/app/page.tsx"], "AAAA");
+      (fetch as Mock).mockResolvedValueOnce(createFetchResponse(map));
+
+      const url = "about://React/Server/webpack-internal:///(rsc)/./src/app/page.tsx?15";
+      const result = await resolveOriginalPosition(url, 1, 1);
+
+      expect(result).toEqual({ fileName: "src/app/page.tsx", lineNumber: 1, columnNumber: 1 });
+      expect((fetch as Mock).mock.calls[0][0]).toBe(
+        "http://localhost:3002/__nextjs_source-map?filename=" +
+          encodeURIComponent("(rsc)/./src/app/page.tsx"),
+      );
+    });
+
+    it("strips query params from webpack-internal module path", async () => {
+      vi.stubGlobal("location", { origin: "http://localhost:3002" });
+      const map = makeSourceMap(["webpack://./src/app/layout.tsx"], "AAAA");
+      (fetch as Mock).mockResolvedValueOnce(createFetchResponse(map));
+
+      const url = "about://React/Server/webpack-internal:///(rsc)/./src/app/layout.tsx?abc123";
+      const result = await resolveOriginalPosition(url, 1, 1);
+
+      expect(result).not.toBeNull();
+      const fetchedUrl = (fetch as Mock).mock.calls[0][0] as string;
+      expect(fetchedUrl).toContain(encodeURIComponent("(rsc)/./src/app/layout.tsx"));
+      expect(fetchedUrl).not.toContain("abc123");
+    });
+
+    it("returns null when source map fetch fails", async () => {
+      vi.stubGlobal("location", { origin: "http://localhost:3002" });
+      (fetch as Mock).mockResolvedValueOnce(createFetchResponse("", { ok: false }));
+
+      const url = "about://React/Server/webpack-internal:///(rsc)/./src/app/page.tsx?15";
+      const result = await resolveOriginalPosition(url, 1, 1);
+      expect(result).toBeNull();
+    });
+
+    it("returns null when source map response is empty", async () => {
+      vi.stubGlobal("location", { origin: "http://localhost:3002" });
+      (fetch as Mock).mockResolvedValueOnce(createFetchResponse(""));
+
+      const url = "about://React/Server/webpack-internal:///(rsc)/./src/app/page.tsx?15";
+      const result = await resolveOriginalPosition(url, 1, 1);
+      expect(result).toBeNull();
+    });
+
+    it("returns null when fetch throws", async () => {
+      vi.stubGlobal("location", { origin: "http://localhost:3002" });
+      (fetch as Mock).mockRejectedValueOnce(new Error("network"));
+
+      const url = "about://React/Server/webpack-internal:///(rsc)/./src/app/page.tsx?15";
+      const result = await resolveOriginalPosition(url, 1, 1);
+      expect(result).toBeNull();
+    });
+  });
+
   describe("fetchAndParseWebpackInternal (webpack eval-source-map)", () => {
     const webpackUrl = "webpack-internal:///./src/pages/index.tsx?export=default";
 
@@ -677,6 +735,24 @@ describe("source-map", () => {
 
       const result = await resolveOriginalPosition("http://localhost/asis.js", 1, 1);
       expect(result!.fileName).toBe("src/components/Button.tsx");
+    });
+
+    it("strips webpack:// prefix from source paths", async () => {
+      const map = makeSourceMap(["webpack://./src/app/page.tsx"], "AAAA");
+      const js = jsWithSourceMapComment("code", toBase64DataUri(map));
+      (fetch as Mock).mockResolvedValueOnce(createFetchResponse(js));
+
+      const result = await resolveOriginalPosition("http://localhost/dist/main.js", 1, 1);
+      expect(result!.fileName).toBe("src/app/page.tsx");
+    });
+
+    it("strips webpack:/// prefix from source paths", async () => {
+      const map = makeSourceMap(["webpack:///./src/app/page.tsx"], "AAAA");
+      const js = jsWithSourceMapComment("code", toBase64DataUri(map));
+      (fetch as Mock).mockResolvedValueOnce(createFetchResponse(js));
+
+      const result = await resolveOriginalPosition("http://localhost/dist/main.js", 1, 1);
+      expect(result!.fileName).toBe("src/app/page.tsx");
     });
 
     it("strips leading ../ sequences from esbuild-style relative source paths", async () => {

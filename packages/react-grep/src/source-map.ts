@@ -163,6 +163,7 @@ const fetchAndParse = async (url: string): Promise<SourceMapData | null> => {
 
 const WEBPACK_INTERNAL_RE = /^webpack-internal:\/\/\//;
 const ABOUT_SERVER_RE = /^about:\/\/React\/Server\/file:\/\/\//;
+const ABOUT_SERVER_WEBPACK_RE = /^about:\/\/React\/Server\/webpack-internal:\/\/\//;
 const NEXT_DOTDIR_RE = /[/\\](\.next[/\\].+?)(?:\?.*)?$/;
 
 const fetchAndParseServerFile = async (url: string): Promise<SourceMapData | null> => {
@@ -175,6 +176,25 @@ const fetchAndParseServerFile = async (url: string): Promise<SourceMapData | nul
     const origin = typeof location !== "undefined" ? location.origin : "";
     /* v8 ignore stop */
     const mapUrl = `${origin}/__nextjs_source-map?filename=${encodeURIComponent(dotNextMatch[1])}`;
+    const res = await fetch(mapUrl);
+    if (!res.ok) return null;
+    const json = await res.text();
+    if (!json) return null;
+    return parseSourceMap(json);
+  } catch {
+    return null;
+  }
+};
+
+const fetchAndParseServerWebpackInternal = async (url: string): Promise<SourceMapData | null> => {
+  try {
+    const modulePath = decodeURIComponent(
+      url.replace(ABOUT_SERVER_WEBPACK_RE, "").replace(/\?.*$/, ""),
+    );
+    /* v8 ignore start */
+    const origin = typeof location !== "undefined" ? location.origin : "";
+    /* v8 ignore stop */
+    const mapUrl = `${origin}/__nextjs_source-map?filename=${encodeURIComponent(modulePath)}`;
     const res = await fetch(mapUrl);
     if (!res.ok) return null;
     const json = await res.text();
@@ -239,7 +259,8 @@ const getSourceMap = (url: string): Promise<SourceMapData | null> => {
       const oldest = cache.keys().next().value!;
       cache.delete(oldest);
     }
-    if (ABOUT_SERVER_RE.test(url)) promise = fetchAndParseServerFile(url);
+    if (ABOUT_SERVER_WEBPACK_RE.test(url)) promise = fetchAndParseServerWebpackInternal(url);
+    else if (ABOUT_SERVER_RE.test(url)) promise = fetchAndParseServerFile(url);
     else if (WEBPACK_INTERNAL_RE.test(url)) promise = fetchAndParseWebpackInternal(url);
     else promise = fetchAndParse(url);
     cache.set(url, promise);
@@ -277,6 +298,8 @@ export const resolveOriginalPosition = async (
   let fileName = map.sources[seg[1]];
   if (fileName.startsWith("file:///")) {
     fileName = decodeURIComponent(new URL(fileName).pathname);
+  } else if (fileName.startsWith("webpack://")) {
+    fileName = fileName.replace(/^webpack:\/\/\/?\.\/?/, "");
   }
   fileName = fileName.replace(/^(?:\.\.\/)+/, "");
 
