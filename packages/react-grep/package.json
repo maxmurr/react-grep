@@ -1,6 +1,6 @@
 {
   "name": "react-grep",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Hold CMD to see React component names + file:line overlaid on any element",
   "keywords": [
     "component",
@@ -30,6 +30,7 @@
   ],
   "type": "module",
   "sideEffects": true,
+  "main": "dist/index.js",
   "module": "dist/index.js",
   "browser": "dist/index.global.js",
   "types": "dist/index.d.ts",
