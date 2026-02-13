@@ -430,6 +430,161 @@ describe("source-map", () => {
     });
   });
 
+  describe("fetchAndParseWebpackInternal (webpack eval-source-map)", () => {
+    const webpackUrl = "webpack-internal:///./src/pages/index.tsx?export=default";
+
+    const makeWebpackBundle = (moduleUrl: string, sourceMap: string): string => {
+      const b64 = btoa(sourceMap);
+      const dataUri = `data:application/json;charset=utf-8;base64,${b64}`;
+      return [
+        `eval("var code = 1;`,
+        `\\n//# sourceMappingURL=${dataUri}`,
+        `\\n//# sourceURL=${moduleUrl}\\n");`,
+      ].join("");
+    };
+
+    const mockPerformanceEntries = (urls: string[]): void => {
+      const entries = urls.map((name) => ({ name, initiatorType: "script" }));
+      vi.stubGlobal("performance", {
+        getEntriesByType: vi.fn().mockReturnValue(entries),
+      });
+    };
+
+    it("resolves source map from webpack eval bundle via performance entries", async () => {
+      const map = makeSourceMap(["src/pages/index.tsx"], "AAAA");
+      const bundle = makeWebpackBundle(webpackUrl, map);
+      mockPerformanceEntries(["http://localhost:3004/component.js"]);
+
+      (fetch as Mock).mockResolvedValueOnce(createFetchResponse(bundle));
+
+      const result = await resolveOriginalPosition(webpackUrl, 1, 1);
+      expect(result).toEqual({ fileName: "src/pages/index.tsx", lineNumber: 1, columnNumber: 1 });
+    });
+
+    it("skips scripts that do not contain the module", async () => {
+      const map = makeSourceMap(["src/pages/index.tsx"], "AAAA");
+      const bundle = makeWebpackBundle(webpackUrl, map);
+      mockPerformanceEntries([
+        "http://localhost:3004/framework.js",
+        "http://localhost:3004/component.js",
+      ]);
+
+      (fetch as Mock)
+        .mockResolvedValueOnce(createFetchResponse("unrelated code"))
+        .mockResolvedValueOnce(createFetchResponse(bundle));
+
+      const result = await resolveOriginalPosition(webpackUrl, 1, 1);
+      expect(result).not.toBeNull();
+      expect(fetch).toHaveBeenCalledTimes(2);
+    });
+
+    it("deduplicates script URLs from performance entries", async () => {
+      mockPerformanceEntries(["http://localhost:3004/app.js", "http://localhost:3004/app.js"]);
+
+      (fetch as Mock).mockResolvedValueOnce(createFetchResponse("no module here"));
+
+      const result = await resolveOriginalPosition(webpackUrl, 1, 1);
+      expect(result).toBeNull();
+      expect(fetch).toHaveBeenCalledTimes(1);
+    });
+
+    it("skips non-JS entries from performance API", async () => {
+      vi.stubGlobal("performance", {
+        getEntriesByType: vi.fn().mockReturnValue([
+          { name: "http://localhost:3004/style.css", initiatorType: "link" },
+          { name: "http://localhost:3004/image.png", initiatorType: "img" },
+        ]),
+      });
+
+      const result = await resolveOriginalPosition(webpackUrl, 1, 1);
+      expect(result).toBeNull();
+      expect(fetch).not.toHaveBeenCalled();
+    });
+
+    it("returns null when no script contains the module", async () => {
+      mockPerformanceEntries(["http://localhost:3004/other.js"]);
+
+      (fetch as Mock).mockResolvedValueOnce(createFetchResponse("no matching module"));
+
+      const result = await resolveOriginalPosition(webpackUrl, 1, 1);
+      expect(result).toBeNull();
+    });
+
+    it("returns null when fetch throws", async () => {
+      mockPerformanceEntries(["http://localhost:3004/error.js"]);
+
+      (fetch as Mock).mockRejectedValueOnce(new Error("network error"));
+
+      const result = await resolveOriginalPosition(webpackUrl, 1, 1);
+      expect(result).toBeNull();
+    });
+
+    it("skips scripts with failed fetch", async () => {
+      const map = makeSourceMap(["src/pages/index.tsx"], "AAAA");
+      const bundle = makeWebpackBundle(webpackUrl, map);
+      mockPerformanceEntries([
+        "http://localhost:3004/fail.js",
+        "http://localhost:3004/component.js",
+      ]);
+
+      (fetch as Mock)
+        .mockResolvedValueOnce(createFetchResponse("", { ok: false }))
+        .mockResolvedValueOnce(createFetchResponse(bundle));
+
+      const result = await resolveOriginalPosition(webpackUrl, 1, 1);
+      expect(result).not.toBeNull();
+    });
+
+    it("returns null when bundle has sourceURL but no sourceMappingURL", async () => {
+      mockPerformanceEntries(["http://localhost:3004/no-map.js"]);
+
+      const bundleNoMap = `eval("var code = 1;\\n//# sourceURL=${webpackUrl}\\n");`;
+      (fetch as Mock).mockResolvedValueOnce(createFetchResponse(bundleNoMap));
+
+      const result = await resolveOriginalPosition(webpackUrl, 1, 1);
+      expect(result).toBeNull();
+    });
+
+    it("returns null when sourceMappingURL data URI is malformed", async () => {
+      mockPerformanceEntries(["http://localhost:3004/bad-uri.js"]);
+
+      const bundle = [
+        `eval("var code = 1;`,
+        `\\n//# sourceMappingURL=data:application/json;notbase64`,
+        `\\n//# sourceURL=${webpackUrl}\\n");`,
+      ].join("");
+      (fetch as Mock).mockResolvedValueOnce(createFetchResponse(bundle));
+
+      const result = await resolveOriginalPosition(webpackUrl, 1, 1);
+      expect(result).toBeNull();
+    });
+
+    it("returns null when source map data URI is unparseable", async () => {
+      mockPerformanceEntries(["http://localhost:3004/bad-map.js"]);
+
+      const badB64 = btoa(JSON.stringify({ version: 3 }));
+      const badDataUri = `data:application/json;charset=utf-8;base64,${badB64}`;
+      const bundle = [
+        `eval("var code = 1;`,
+        `\\n//# sourceMappingURL=${badDataUri}`,
+        `\\n//# sourceURL=${webpackUrl}\\n");`,
+      ].join("");
+      (fetch as Mock).mockResolvedValueOnce(createFetchResponse(bundle));
+
+      const result = await resolveOriginalPosition(webpackUrl, 1, 1);
+      expect(result).toBeNull();
+    });
+
+    it("returns null when performance API has no entries", async () => {
+      vi.stubGlobal("performance", {
+        getEntriesByType: vi.fn().mockReturnValue([]),
+      });
+
+      const result = await resolveOriginalPosition(webpackUrl, 1, 1);
+      expect(result).toBeNull();
+    });
+  });
+
   describe("LRU cache", () => {
     it("returns cached result on second call for same URL", async () => {
       const map = makeSourceMap(["a.ts"], "AAAA");

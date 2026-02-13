@@ -1,0 +1,11 @@
+{
+  "extends": ["//"],
+  "tasks": {
+    "build": {
+      "outputs": [".next/**", "!.next/cache/**"]
+    },
+    "check-types": {
+      "outputs": ["tsconfig.tsbuildinfo"]
+    }
+  }
+}

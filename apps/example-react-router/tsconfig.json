@@ -1,0 +1,9 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "noEmit": true,
+    "rootDirs": [".", "./.react-router/types"]
+  },
+  "include": ["app", ".react-router/types/**/*"]
+}

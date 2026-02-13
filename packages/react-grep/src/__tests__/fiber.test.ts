@@ -459,6 +459,7 @@ describe("fiber", () => {
             "    at jsxDEV (http://localhost/react.js:1:1)",
             "    at jsxs (http://localhost/react.js:2:1)",
             "    at jsx (http://localhost/react.js:3:1)",
+            "    at createElement (http://localhost/react.js:3:2)",
             "    at react-stack-top-frame (http://localhost/react.js:4:1)",
             "    at react_stack_bottom_frame (http://localhost/react.js:5:1)",
             "    at fakeJSXCallSite (http://localhost/react.js:6:1)",
@@ -471,6 +472,49 @@ describe("fiber", () => {
 
       await getComponentInfo(el);
       expect(mockResolve).toHaveBeenCalledWith("http://localhost:3000/src/user.tsx", 5, 1);
+    });
+
+    it("skips qualified createElement like exports.createElement", async () => {
+      mockResolve.mockResolvedValue({ fileName: "app.tsx", lineNumber: 10 });
+      const composite = makeFiber({
+        tag: 0,
+        _debugStack: {
+          stack: [
+            "Error",
+            "    at exports.createElement (http://localhost/react.development.js:1054:20)",
+            "    at App (http://localhost:3000/src/app.tsx:10:5)",
+          ].join("\n"),
+        },
+      });
+      const domFiber = makeDomFiber({ return: composite });
+      const el = makeElementWithFiber(domFiber);
+
+      await getComponentInfo(el);
+      expect(mockResolve).toHaveBeenCalledWith("http://localhost:3000/src/app.tsx", 10, 5);
+    });
+
+    it("skips Gatsby patched createElement with [as] alias", async () => {
+      mockResolve.mockResolvedValue({ fileName: "page.tsx", lineNumber: 21 });
+      const composite = makeFiber({
+        tag: 0,
+        _debugStack: {
+          stack: [
+            "Error: react-stack-top-frame",
+            "    at exports.createElement (webpack-internal:///../../node_modules/react/cjs/react.development.js:1054:20)",
+            "    at Object.patchedCreateElement [as createElement] (webpack-internal:///./.cache/head/head-export-handler-for-browser.js:124:39)",
+            "    at Header (webpack-internal:///./src/pages/index.tsx?export=default:21:62)",
+          ].join("\n"),
+        },
+      });
+      const domFiber = makeDomFiber({ return: composite });
+      const el = makeElementWithFiber(domFiber);
+
+      await getComponentInfo(el);
+      expect(mockResolve).toHaveBeenCalledWith(
+        "webpack-internal:///./src/pages/index.tsx?export=default",
+        21,
+        62,
+      );
     });
 
     it("skips node_modules frames", async () => {

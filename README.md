@@ -47,16 +47,17 @@ The inspector starts automatically when the script loads.
 
 react-grep works with any React app that uses `react-dom` in development mode. It reads React's internal fiber tree, so no framework-specific plugin is needed.
 
-| Framework / Bundler               | Status                 |
-| --------------------------------- | ---------------------- |
-| Vite + React                      | Tested                 |
-| Next.js 15 (Turbopack)            | Tested                 |
-| Next.js (Webpack)                 | Untested — should work |
-| Create React App                  | Untested — should work |
-| Remix                             | Untested — should work |
-| Gatsby                            | Untested — should work |
-| Custom Webpack / Rollup / esbuild | Untested — should work |
-| React Native                      | Not supported (no DOM) |
+| Framework / Bundler              | Status                 |
+| -------------------------------- | ---------------------- |
+| Vite + React                     | Tested                 |
+| Next.js 16 (Turbopack)           | Tested                 |
+| Next.js 16 (Webpack)             | Tested                 |
+| React Router v7 (framework mode) | Tested                 |
+| Gatsby                           | Tested                 |
+| esbuild                          | Tested                 |
+| Custom Webpack / Rollup          | Untested — should work |
+| Create React App                 | Deprecated             |
+| React Native                     | Not supported (no DOM) |
 
 Next.js has dedicated support for server component names and Turbopack indexed source maps.
 

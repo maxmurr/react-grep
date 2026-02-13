@@ -1,10 +1,10 @@
 {
-  "name": "@react-grep/example",
+  "name": "@react-grep/example-vite",
   "version": "0.0.0",
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --port 3000",
     "build": "tsc -b && vite build",
     "check-types": "tsc --noEmit"
   },

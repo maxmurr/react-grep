@@ -1,11 +1,13 @@
 {
   "$schema": "https://turborepo.dev/schema.v2.json",
+  "ui": "tui",
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**"]
     },
     "dev": {
+      "dependsOn": ["^build"],
       "persistent": true,
       "cache": false
     },

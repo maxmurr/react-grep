@@ -5,6 +5,10 @@ dist
 out/
 next-env.d.ts
 *.tsbuildinfo
+.cache/
+public/
+.react-router/
+build/
 .env
 .env*.local
 .npmrc

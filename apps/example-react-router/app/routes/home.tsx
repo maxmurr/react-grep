@@ -1,6 +1,6 @@
 const Header = () => (
   <header style={{ padding: "2rem", borderBottom: "1px solid #e5e7eb" }}>
-    <h1 style={{ margin: 0, fontSize: "1.5rem" }}>react-grep example</h1>
+    <h1 style={{ margin: 0, fontSize: "1.5rem" }}>react-grep + React Router</h1>
     <p style={{ margin: "0.5rem 0 0", color: "#6b7280" }}>
       Hold <kbd>⌘</kbd> (Mac) or <kbd>Ctrl</kbd> (Windows/Linux) and hover over elements to inspect
       React components.
@@ -62,7 +62,7 @@ const CardGrid = () => (
   </div>
 );
 
-export const App = () => (
+const Home = () => (
   <div style={{ maxWidth: "800px", margin: "0 auto", fontFamily: "system-ui, sans-serif" }}>
     <Header />
     <main style={{ padding: "2rem" }}>
@@ -70,3 +70,5 @@ export const App = () => (
     </main>
   </div>
 );
+
+export default Home;

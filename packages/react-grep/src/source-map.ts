@@ -161,6 +161,7 @@ const fetchAndParse = async (url: string): Promise<SourceMapData | null> => {
   }
 };
 
+const WEBPACK_INTERNAL_RE = /^webpack-internal:\/\/\//;
 const ABOUT_SERVER_RE = /^about:\/\/React\/Server\/file:\/\/\//;
 const NEXT_DOTDIR_RE = /[/\\](\.next[/\\].+?)(?:\?.*)?$/;
 
@@ -184,6 +185,53 @@ const fetchAndParseServerFile = async (url: string): Promise<SourceMapData | nul
   }
 };
 
+const WEBPACK_SM_RE = /sourceMappingURL=(data:application\/json[^"'\s\\]+)/g;
+
+const getScriptUrls = (): string[] => {
+  /* v8 ignore start */
+  if (typeof performance === "undefined" || !performance.getEntriesByType) return [];
+  /* v8 ignore stop */
+  const seen = new Set<string>();
+  const urls: string[] = [];
+  for (const entry of performance.getEntriesByType("resource")) {
+    const re = entry as PerformanceResourceTiming;
+    if (!re.name.endsWith(".js") || seen.has(re.name)) continue;
+    seen.add(re.name);
+    urls.push(re.name);
+  }
+  return urls;
+};
+
+const fetchAndParseWebpackInternal = async (url: string): Promise<SourceMapData | null> => {
+  try {
+    const scriptUrls = getScriptUrls();
+    const marker = `sourceURL=${url}`;
+
+    for (const scriptUrl of scriptUrls) {
+      const res = await fetch(scriptUrl);
+      if (!res.ok) continue;
+      const text = await res.text();
+
+      const markerIdx = text.indexOf(marker);
+      if (markerIdx === -1) continue;
+
+      const before = text.substring(Math.max(0, markerIdx - 200_000), markerIdx);
+      let lastRef: string | null = null;
+      let m: RegExpExecArray | null;
+      WEBPACK_SM_RE.lastIndex = 0;
+      while ((m = WEBPACK_SM_RE.exec(before)) !== null) lastRef = m[1];
+      if (!lastRef) continue;
+
+      const json = await fetchSourceMapJson(lastRef, url);
+      if (json) return parseSourceMap(json);
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
+};
+
 const getSourceMap = (url: string): Promise<SourceMapData | null> => {
   let promise = cache.get(url);
   if (!promise) {
@@ -191,7 +239,9 @@ const getSourceMap = (url: string): Promise<SourceMapData | null> => {
       const oldest = cache.keys().next().value!;
       cache.delete(oldest);
     }
-    promise = ABOUT_SERVER_RE.test(url) ? fetchAndParseServerFile(url) : fetchAndParse(url);
+    if (ABOUT_SERVER_RE.test(url)) promise = fetchAndParseServerFile(url);
+    else if (WEBPACK_INTERNAL_RE.test(url)) promise = fetchAndParseWebpackInternal(url);
+    else promise = fetchAndParse(url);
     cache.set(url, promise);
   }
   return promise;

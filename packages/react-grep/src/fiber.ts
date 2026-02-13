@@ -61,12 +61,24 @@ const SKIP_FRAMES = new Set([
   "jsxDEV",
   "jsxs",
   "jsx",
+  "createElement",
   "react-stack-top-frame",
   "react_stack_bottom_frame",
   "fakeJSXCallSite",
 ]);
 
-const FRAME_RE = /at (?:(\S+) )?\(?(.+):(\d+):(\d+)\)?$/;
+const FRAME_RE = /at (?:(.+) \()?(.+):(\d+):(\d+)\)?$/;
+
+const isSkippedFn = (name: string): boolean => {
+  if (SKIP_FRAMES.has(name)) return true;
+  const dotIdx = name.lastIndexOf(".");
+  if (dotIdx !== -1) {
+    const base = name.substring(dotIdx + 1).replace(/\s*\[.*$/, "");
+    if (SKIP_FRAMES.has(base)) return true;
+  }
+  const aliasMatch = /\[as (\w+)\]/.exec(name);
+  return aliasMatch !== null && SKIP_FRAMES.has(aliasMatch[1]);
+};
 
 interface RawFrame {
   url: string;
@@ -83,7 +95,7 @@ const parseFirstUserFrame = (fiber: Fiber): RawFrame | null => {
     if (!match) continue;
 
     const [, fnName, url, lineStr, colStr] = match;
-    if (fnName && SKIP_FRAMES.has(fnName)) continue;
+    if (fnName && isSkippedFn(fnName)) continue;
     if (url.includes("/node_modules/")) continue;
 
     return { url, line: Number(lineStr), column: Number(colStr) };

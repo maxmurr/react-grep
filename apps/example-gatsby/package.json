@@ -1,0 +1,21 @@
+{
+  "name": "@react-grep/example-gatsby",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "gatsby develop -p 3004",
+    "build": "gatsby build",
+    "start": "gatsby serve"
+  },
+  "dependencies": {
+    "gatsby": "^5.16.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "react-grep": "workspace:*",
+    "typescript": "^5.7.0"
+  }
+}
