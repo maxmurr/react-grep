@@ -1,8 +1,8 @@
 # react-grep
 
-[![npm](https://img.shields.io/npm/v/react-grep)](https://www.npmjs.com/package/react-grep)
-[![npm bundle size](https://img.shields.io/bundlephobia/minzip/react-grep)](https://bundlephobia.com/package/react-grep)
-[![npm downloads](https://img.shields.io/npm/dm/react-grep)](https://www.npmjs.com/package/react-grep)
+[![version](https://img.shields.io/npm/v/react-grep?style=flat&colorA=050506&colorB=34d399)](https://npmjs.com/package/react-grep)
+[![size](https://img.shields.io/bundlephobia/minzip/react-grep?label=gzip&style=flat&colorA=050506&colorB=34d399)](https://bundlephobia.com/package/react-grep)
+[![downloads](https://img.shields.io/npm/dt/react-grep.svg?style=flat&colorA=050506&colorB=34d399)](https://npmjs.com/package/react-grep)
 
 Hold **Cmd** to see React component names + file:line overlaid on any element.
 
