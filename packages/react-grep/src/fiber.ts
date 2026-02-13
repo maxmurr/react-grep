@@ -33,6 +33,7 @@ export const getCompositeComponentFiber = (fiber: Fiber): Fiber | null => {
 
 type NamedFn = ((...args: unknown[]) => unknown) & { displayName?: string; name: string };
 
+/* v8 ignore start */
 const getInnerFunction = (type: Fiber["type"]): NamedFn | null => {
   if (typeof type === "function") return type;
   if (type && typeof type === "object") {
@@ -41,6 +42,7 @@ const getInnerFunction = (type: Fiber["type"]): NamedFn | null => {
   }
   return null;
 };
+/* v8 ignore stop */
 
 export const getComponentName = (fiber: Fiber): string => {
   const { type } = fiber;

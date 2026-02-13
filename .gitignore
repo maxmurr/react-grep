@@ -9,7 +9,11 @@ next-env.d.ts
 .env*.local
 .npmrc
 *.tgz
+coverage
 .DS_Store
 *.log
 bun.lock
 .claude
+.agents
+AGENTS.md
+CLAUDE.md

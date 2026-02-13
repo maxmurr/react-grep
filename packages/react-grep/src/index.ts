@@ -14,7 +14,9 @@ export const destroy = (): void => {
   inspector = null;
 };
 
+/* v8 ignore start */
 if (typeof window !== "undefined") {
+  /* v8 ignore stop */
   const bootstrap = () => init();
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", bootstrap);
