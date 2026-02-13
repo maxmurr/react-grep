@@ -1,5 +1,11 @@
 # react-grep
 
+## 0.3.1
+
+### Patch Changes
+
+- Fix source map resolution for React Server Components in Next.js with webpack bundler
+
 ## 0.3.0
 
 ### Minor Changes
