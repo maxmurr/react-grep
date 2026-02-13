@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { JetBrains_Mono, DM_Sans } from "next/font/google";
 import Script from "next/script";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const SITE_URL = "https://react-grep.com";
@@ -57,6 +58,7 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => (
       <a href="#main" className="skip-link">
         Skip to Content
       </a>
+      <Analytics />
       {children}
       <Script src="https://unpkg.com/react-grep/dist/index.global.js" strategy="lazyOnload" />
     </body>
