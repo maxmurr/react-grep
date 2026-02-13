@@ -1,6 +1,21 @@
-# react-grep
+<p align="center">
+  <a href="https://react-grep.com">
+    <h1 align="center">react-grep</h1>
+  </a>
+</p>
 
-Hold **Cmd** to see React component names + file:line overlaid on any element.
+<p align="center">
+  Hold <strong>Cmd</strong> to see React component names + file:line overlaid on any element.
+</p>
+
+<p align="center">
+  <a href="https://npmjs.com/package/react-grep"><img src="https://img.shields.io/npm/v/react-grep?style=flat&colorA=050506&colorB=34d399" alt="npm version"></a>
+  <a href="https://npmjs.com/package/react-grep"><img src="https://img.shields.io/npm/dm/react-grep?style=flat&colorA=050506&colorB=34d399" alt="npm downloads"></a>
+  <a href="https://bundlephobia.com/package/react-grep"><img src="https://img.shields.io/bundlephobia/minzip/react-grep?style=flat&colorA=050506&colorB=34d399&label=bundle" alt="bundle size"></a>
+  <a href="https://github.com/maxmurr/react-grep/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/react-grep?style=flat&colorA=050506&colorB=34d399" alt="license"></a>
+</p>
+
+<br/>
 
 - **Inspect** — Hold `Cmd` (Mac) / `Ctrl` (Windows/Linux) and hover over any element to see the React component name and source file location
 - **Toggle source** — Tap `Shift` (while holding modifier) to switch between the component definition and the call site where it's rendered
@@ -10,8 +25,18 @@ Zero dependencies. Works with any React app in development mode.
 
 ## Install
 
-```bash
+```sh
+# npm
 npm install react-grep
+
+# pnpm
+pnpm add react-grep
+
+# yarn
+yarn add react-grep
+
+# bun
+bun add react-grep
 ```
 
 ## Usage
@@ -29,8 +54,8 @@ If you need manual control:
 ```ts
 import { init, destroy } from "react-grep";
 
-init(); // start the inspector
-destroy(); // stop and clean up
+init();
+destroy();
 ```
 
 ### Script tag
@@ -45,16 +70,17 @@ The inspector starts automatically when the script loads.
 
 react-grep works with any React app that uses `react-dom` in development mode. It reads React's internal fiber tree, so no framework-specific plugin is needed.
 
-| Framework / Bundler               | Status                 |
-| --------------------------------- | ---------------------- |
-| Vite + React                      | Tested                 |
-| Next.js 15 (Turbopack)            | Tested                 |
-| Next.js (Webpack)                 | Untested — should work |
-| Create React App                  | Untested — should work |
-| Remix                             | Untested — should work |
-| Gatsby                            | Untested — should work |
-| Custom Webpack / Rollup / esbuild | Untested — should work |
-| React Native                      | Not supported (no DOM) |
+| Framework / Bundler              | Status                 |
+| -------------------------------- | ---------------------- |
+| Vite + React                     | Tested                 |
+| Next.js 16 (Turbopack)           | Tested                 |
+| Next.js 16 (Webpack)             | Tested                 |
+| React Router v7 (framework mode) | Tested                 |
+| Gatsby                           | Tested                 |
+| esbuild                          | Tested                 |
+| Custom Webpack / Rollup          | Untested — should work |
+| Create React App                 | Deprecated             |
+| React Native                     | Not supported (no DOM) |
 
 Next.js has dedicated support for server component names and Turbopack indexed source maps.
 
@@ -83,4 +109,4 @@ Stop the inspector and remove all event listeners and DOM elements.
 
 ## License
 
-MIT
+[MIT](https://github.com/maxmurr/react-grep/blob/main/LICENSE)
