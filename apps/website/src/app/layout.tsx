@@ -23,7 +23,7 @@ const sans = DM_Sans({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "react-grep — Inspect React Components in the Browser",
+    default: "react-grep - Inspect React Components in the Browser",
     template: "%s | react-grep",
   },
   description:

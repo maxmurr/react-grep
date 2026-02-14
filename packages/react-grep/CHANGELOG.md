@@ -55,4 +55,4 @@
 
 ### Minor Changes
 
-- Initial release — hold Cmd to inspect React component names and source locations on any element
+- Initial release: hold Cmd to inspect React component names and source locations on any element

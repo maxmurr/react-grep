@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 import { ImageResponse } from "next/og";
 
-export const alt = "react-grep — inspect React components in the browser";
+export const alt = "react-grep - inspect React components in the browser";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 

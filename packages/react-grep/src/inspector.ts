@@ -167,7 +167,7 @@ export class Inspector {
     try {
       await navigator.clipboard.writeText(text);
     } catch {
-      // Clipboard API unavailable or denied — fail silently
+      // Clipboard API unavailable or denied - fail silently
     }
   }
 }

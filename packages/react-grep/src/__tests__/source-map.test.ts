@@ -156,7 +156,7 @@ describe("source-map", () => {
     });
   });
 
-  describe("fetchAndParse — sourceMappingURL comment", () => {
+  describe("fetchAndParse -sourceMappingURL comment", () => {
     it("finds //# sourceMappingURL comment", async () => {
       const map = makeSourceMap(["a.ts"], "AAAA");
       const js = jsWithSourceMapComment("code", toBase64DataUri(map));
@@ -187,7 +187,7 @@ describe("source-map", () => {
     });
   });
 
-  describe("fetchAndParse — response headers", () => {
+  describe("fetchAndParse -response headers", () => {
     it("finds SourceMap header", async () => {
       const map = makeSourceMap(["a.ts"], "AAAA");
       const js = createFetchResponse("code", {
@@ -237,7 +237,7 @@ describe("source-map", () => {
     });
   });
 
-  describe("fetchAndParse — convention .map fallback", () => {
+  describe("fetchAndParse -convention .map fallback", () => {
     it("fetches {url}.map when no comment or header", async () => {
       const map = makeSourceMap(["a.ts"], "AAAA");
       (fetch as Mock)
@@ -268,7 +268,7 @@ describe("source-map", () => {
     });
   });
 
-  describe("fetchAndParse — network errors", () => {
+  describe("fetchAndParse -network errors", () => {
     it("returns null when fetch throws", async () => {
       (fetch as Mock).mockRejectedValueOnce(new Error("network error"));
 

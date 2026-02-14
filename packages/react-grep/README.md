@@ -17,9 +17,9 @@
 
 <br/>
 
-- **Inspect** — Hold `Cmd` (Mac) / `Ctrl` (Windows/Linux) and hover over any element to see the React component name and source file location
-- **Toggle source** — Tap `Shift` (while holding modifier) to switch between the component definition and the call site where it's rendered
-- **Copy** — `Cmd+Shift+Click` to copy the active file path and line number to your clipboard
+- **Inspect** - Hold `Cmd` (Mac) / `Ctrl` (Windows/Linux) and hover over any element to see the React component name and source file location
+- **Toggle source** - Tap `Shift` (while holding modifier) to switch between the component definition and the call site where it's rendered
+- **Copy** - `Cmd+Shift+Click` to copy the active file path and line number to your clipboard
 
 Zero dependencies. Works with any React app in development mode.
 
@@ -78,30 +78,30 @@ react-grep works with any React app that uses `react-dom` in development mode. I
 | React Router v7 (framework mode) | Tested                 |
 | Gatsby                           | Tested                 |
 | esbuild                          | Tested                 |
-| Custom Webpack / Rollup          | Untested — should work |
+| Custom Webpack / Rollup          | Untested, should work  |
 | Create React App                 | Deprecated             |
 | React Native                     | Not supported (no DOM) |
 
 Next.js has dedicated support for server component names and Turbopack indexed source maps.
 
-Source map resolution is automatic — if your dev server serves source maps (inline or external), react-grep will resolve bundled locations back to original files.
+Source map resolution is automatic. If your dev server serves source maps (inline or external), react-grep will resolve bundled locations back to original files.
 
 ## How it works
 
-react-grep reads React's internal fiber tree to find component names and source locations (`_debugSource` / `_debugStack`). This data is only available in **development builds** of React — production builds strip it out.
+react-grep reads React's internal fiber tree to find component names and source locations (`_debugSource` / `_debugStack`). This data is only available in **development builds** of React. Production builds strip it out.
 
 When the modifier key is held:
 
 1. The hovered DOM element is highlighted with a blue overlay
 2. A tooltip shows the component name, file path, and call site (if available)
-3. Tap `Shift` to toggle between the component source and call site — the active source is highlighted, the inactive one is dimmed
+3. Tap `Shift` to toggle between the component source and call site. The active source is highlighted, the inactive one is dimmed
 4. `Cmd+Shift+Click` copies the active `file:line` to clipboard (without toggling)
 
 ## API
 
 ### `init()`
 
-Start the inspector. Called automatically on import — only needed if you previously called `destroy()`.
+Start the inspector. Called automatically on import, only needed if you previously called `destroy()`.
 
 ### `destroy()`
 

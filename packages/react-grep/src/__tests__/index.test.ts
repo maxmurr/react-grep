@@ -22,7 +22,7 @@ describe("index", () => {
     expect(mockStart).toHaveBeenCalledTimes(1);
   });
 
-  it("init is idempotent — second call is no-op", async () => {
+  it("init is idempotent - second call is no-op", async () => {
     Object.defineProperty(document, "readyState", { value: "complete", configurable: true });
     vi.doMock("../inspector", () => ({ Inspector: MockInspector }));
 

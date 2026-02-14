@@ -56,7 +56,7 @@ describe("OverlayManager", () => {
       expect(document.querySelector("[data-react-grep='tooltip']")).not.toBeNull();
     });
 
-    it("is idempotent — second call does not create duplicates", () => {
+    it("is idempotent - second call does not create duplicates", () => {
       overlay.init();
       overlay.init();
       expect(document.querySelectorAll("[data-react-grep='highlight']")).toHaveLength(1);
@@ -315,7 +315,7 @@ describe("OverlayManager", () => {
       overlay.showCopied("file.tsx:1");
       overlay.destroy();
       vi.advanceTimersByTime(2000);
-      // no error — timer was cleared
+      // no error - timer was cleared
     });
 
     it("is safe to call multiple times", () => {

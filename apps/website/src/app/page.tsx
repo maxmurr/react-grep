@@ -27,7 +27,7 @@ const Page = () => (
       </p>
 
       <div className="try-prompt animate-in" style={{ animationDelay: "240ms" }}>
-        Try it — hold <kbd>⌘</kbd> and hover anywhere on this page
+        Try it - hold <kbd>⌘</kbd> and hover anywhere on this page
       </div>
 
       <div className="animate-in" style={{ animationDelay: "300ms" }}>
