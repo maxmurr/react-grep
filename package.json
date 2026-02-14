@@ -10,6 +10,12 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
+    "dev:website": "turbo run dev --filter=@react-grep/website",
+    "dev:vite": "turbo run dev --filter=@react-grep/example-vite",
+    "dev:nextjs": "turbo run dev --filter=@react-grep/example-nextjs-webpack",
+    "dev:react-router": "turbo run dev --filter=@react-grep/example-react-router",
+    "dev:gatsby": "turbo run dev --filter=@react-grep/example-gatsby",
+    "dev:esbuild": "turbo run dev --filter=@react-grep/example-esbuild",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
     "format": "oxfmt --write .",
