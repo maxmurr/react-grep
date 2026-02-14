@@ -1,3 +1,5 @@
+import { InstallTabs } from "./install-tabs";
+
 const Page = () => (
   <main id="main">
     <section className="hero">
@@ -28,9 +30,8 @@ const Page = () => (
         Try it — hold <kbd>⌘</kbd> and hover anywhere on this page
       </div>
 
-      <div className="install-command animate-in" style={{ animationDelay: "300ms" }}>
-        <span className="prompt">$ </span>
-        <code>npm install react-grep</code>
+      <div className="animate-in" style={{ animationDelay: "300ms" }}>
+        <InstallTabs />
       </div>
     </section>
 
