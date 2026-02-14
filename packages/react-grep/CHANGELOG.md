@@ -1,5 +1,11 @@
 # react-grep
 
+## 0.3.3
+
+### Patch Changes
+
+- fdbcbe6: Verify changesets auto-publish workflow
+
 ## 0.3.1
 
 ### Patch Changes
