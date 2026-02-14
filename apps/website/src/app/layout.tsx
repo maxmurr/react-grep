@@ -23,16 +23,16 @@ const sans = DM_Sans({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "react-grep",
+    default: "react-grep — Inspect React Components in the Browser",
     template: "%s | react-grep",
   },
   description:
-    "Hold ⌘ to see React component names + file:line overlaid on any element. Zero dependencies.",
-  keywords: ["react", "devtools", "inspector", "debug", "component", "developer tools"],
+    "Hold Cmd to see React component names + file:line overlaid on any element. Zero dependencies.",
   authors: [{ name: "maxmurr", url: "https://github.com/maxmurr" }],
   openGraph: {
     title: "react-grep",
-    description: "Hold ⌘ to see React component names + file:line overlaid on any element",
+    description:
+      "Hold Cmd to see React component names + file:line overlaid on any element. Zero dependencies.",
     url: SITE_URL,
     siteName: "react-grep",
     type: "website",
@@ -41,7 +41,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "react-grep",
-    description: "Hold ⌘ to see React component names + file:line overlaid on any element",
+    description:
+      "Hold Cmd to see React component names + file:line overlaid on any element. Zero dependencies.",
   },
   alternates: {
     canonical: SITE_URL,
@@ -52,8 +53,41 @@ export const viewport: Viewport = {
   themeColor: "#050506",
 };
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      name: "react-grep",
+      url: SITE_URL,
+      description:
+        "Hold Cmd to see React component names + file:line overlaid on any element. Zero dependencies.",
+    },
+    {
+      "@type": "SoftwareApplication",
+      name: "react-grep",
+      url: SITE_URL,
+      applicationCategory: "DeveloperApplication",
+      operatingSystem: "Any",
+      author: { "@type": "Person", name: "maxmurr", url: "https://github.com/maxmurr" },
+      license: "https://opensource.org/licenses/MIT",
+      offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+      description:
+        "Hold Cmd to see React component names + file:line overlaid on any element. Zero dependencies.",
+    },
+  ],
+};
+
 const RootLayout = ({ children }: { children: React.ReactNode }) => (
   <html lang="en" className={`${mono.variable} ${sans.variable}`}>
+    <head>
+      <link rel="dns-prefetch" href="https://unpkg.com" />
+      <link rel="preconnect" href="https://unpkg.com" crossOrigin="anonymous" />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+    </head>
     <body>
       <a href="#main" className="skip-link">
         Skip to Content

@@ -5,7 +5,7 @@ const SITE_URL = "https://react-grep.com";
 const sitemap = (): MetadataRoute.Sitemap => [
   {
     url: SITE_URL,
-    lastModified: new Date(),
+    lastModified: "2026-02-14",
     changeFrequency: "monthly",
     priority: 1,
   },
