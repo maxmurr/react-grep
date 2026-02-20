@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { JetBrains_Mono, DM_Sans } from "next/font/google";
 import Script from "next/script";
 import { Analytics } from "@vercel/analytics/next";
+import { FAQ_ITEMS } from "./faq-data";
 import "./globals.css";
 
 const SITE_URL = "https://react-grep.com";
@@ -20,19 +21,30 @@ const sans = DM_Sans({
   display: "swap",
 });
 
+const DESCRIPTION =
+  "Hold Cmd to inspect React component names and source file locations on any element. Zero dependencies, ~5KB gzipped. Works with Vite, Next.js, Gatsby, and more.";
+
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "react-grep",
+    default: "react-grep - React Component Inspector",
     template: "%s | react-grep",
   },
-  description:
-    "Hold Cmd to see React component names + file:line overlaid on any element. Zero dependencies.",
+  description: DESCRIPTION,
+  keywords: [
+    "react",
+    "component inspector",
+    "devtools",
+    "react devtools",
+    "debug",
+    "fiber",
+    "source map",
+    "developer tools",
+  ],
   authors: [{ name: "maxmurr", url: "https://github.com/maxmurr" }],
   openGraph: {
-    title: "react-grep",
-    description:
-      "Hold Cmd to see React component names + file:line overlaid on any element. Zero dependencies.",
+    title: "react-grep - React Component Inspector",
+    description: DESCRIPTION,
     url: SITE_URL,
     siteName: "react-grep",
     type: "website",
@@ -40,9 +52,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "react-grep",
-    description:
-      "Hold Cmd to see React component names + file:line overlaid on any element. Zero dependencies.",
+    title: "react-grep - React Component Inspector",
+    description: DESCRIPTION,
   },
   alternates: {
     canonical: SITE_URL,
@@ -60,8 +71,7 @@ const jsonLd = {
       "@type": "WebSite",
       name: "react-grep",
       url: SITE_URL,
-      description:
-        "Hold Cmd to see React component names + file:line overlaid on any element. Zero dependencies.",
+      description: DESCRIPTION,
     },
     {
       "@type": "SoftwareApplication",
@@ -69,11 +79,25 @@ const jsonLd = {
       url: SITE_URL,
       applicationCategory: "DeveloperApplication",
       operatingSystem: "Any",
+      softwareVersion: "0.3.3",
+      downloadUrl: "https://www.npmjs.com/package/react-grep",
+      programmingLanguage: "TypeScript",
+      codeRepository: "https://github.com/maxmurr/react-grep",
       author: { "@type": "Person", name: "maxmurr", url: "https://github.com/maxmurr" },
       license: "https://opensource.org/licenses/MIT",
       offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
-      description:
-        "Hold Cmd to see React component names + file:line overlaid on any element. Zero dependencies.",
+      description: DESCRIPTION,
+    },
+    {
+      "@type": "FAQPage",
+      mainEntity: FAQ_ITEMS.map((item) => ({
+        "@type": "Question",
+        name: item.question,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: item.answer,
+        },
+      })),
     },
   ],
 };

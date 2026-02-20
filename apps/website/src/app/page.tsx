@@ -1,4 +1,14 @@
 import { InstallTabs } from "./install-tabs";
+import { FAQ_ITEMS } from "./faq-data";
+
+const COMPAT_ROWS = [
+  { framework: "Vite + React", status: "Tested" },
+  { framework: "Next.js 16 (Turbopack)", status: "Tested" },
+  { framework: "Next.js 16 (Webpack)", status: "Tested" },
+  { framework: "React Router v7", status: "Tested" },
+  { framework: "Gatsby", status: "Tested" },
+  { framework: "esbuild", status: "Tested" },
+];
 
 const Page = () => (
   <main id="main">
@@ -16,6 +26,7 @@ const Page = () => (
       <h1 className="title animate-in" style={{ animationDelay: "60ms" }}>
         react<span className="highlight">-grep</span>
         <span className="cursor" aria-hidden="true" />
+        <span className="sr-only"> - React Component Inspector</span>
       </h1>
 
       <p className="tagline animate-in" style={{ animationDelay: "120ms" }}>
@@ -72,7 +83,76 @@ const Page = () => (
       </div>
     </section>
 
-    <section className="section">
+    <section className="section" aria-label="Why react-grep">
+      <h2 className="section-title">Why react-grep</h2>
+      <div className="stats-grid">
+        <div className="stat-card">
+          <span className="stat-value">0</span>
+          <span className="stat-label">Dependencies</span>
+          <p className="stat-desc">No runtime dependencies. Just import and go.</p>
+        </div>
+        <div className="stat-card">
+          <span className="stat-value">~5KB</span>
+          <span className="stat-label">Gzipped</span>
+          <p className="stat-desc">Lightweight enough for any dev setup.</p>
+        </div>
+        <div className="stat-card">
+          <span className="stat-value">6+</span>
+          <span className="stat-label">Frameworks</span>
+          <p className="stat-desc">Vite, Next.js, Gatsby, React Router, and more.</p>
+        </div>
+      </div>
+    </section>
+
+    <section className="section" aria-label="How It Works">
+      <h2 className="section-title">How It Works</h2>
+      <p className="section-body">
+        react-grep reads React&apos;s internal fiber tree to find component names and source
+        locations. When you hold the modifier key and hover, it highlights the element and shows a
+        tooltip with the component name, file path, and line number. Source maps are resolved
+        automatically so you see original file paths, not bundled output.
+      </p>
+      <p className="section-body">
+        This only works in development builds of React, which include{" "}
+        <code className="inline-code">_debugSource</code> and fiber metadata. Production builds
+        strip this data, so react-grep is safe to leave in your dev dependencies.
+      </p>
+    </section>
+
+    <section className="section" aria-label="Framework Compatibility">
+      <h2 className="section-title">Compatibility</h2>
+      <p className="section-body">
+        react-grep works with any React app that uses react-dom in development mode. No
+        framework-specific plugin is needed.
+      </p>
+      <div className="compat-table-wrap">
+        <table className="compat-table">
+          <thead>
+            <tr>
+              <th scope="col">Framework / Bundler</th>
+              <th scope="col">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {COMPAT_ROWS.map((row) => (
+              <tr key={row.framework}>
+                <td>{row.framework}</td>
+                <td>
+                  <span className="compat-check" aria-label={row.status}>
+                    {row.status}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p className="section-body section-note">
+        Next.js has dedicated support for server component names and Turbopack indexed source maps.
+      </p>
+    </section>
+
+    <section className="section" aria-label="Usage">
       <h2 className="section-title">Usage</h2>
 
       <div className="code-section">
@@ -123,6 +203,18 @@ const Page = () => (
             <span className="token-comment">{"// stop and clean up"}</span>
           </code>
         </pre>
+      </div>
+    </section>
+
+    <section className="section" aria-label="Frequently Asked Questions">
+      <h2 className="section-title">Frequently Asked Questions</h2>
+      <div className="faq-list">
+        {FAQ_ITEMS.map((item) => (
+          <details key={item.question} className="faq-item">
+            <summary className="faq-question">{item.question}</summary>
+            <p className="faq-answer">{item.answer}</p>
+          </details>
+        ))}
       </div>
     </section>
 
